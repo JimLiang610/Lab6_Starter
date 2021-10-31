@@ -11,7 +11,8 @@ const recipes = [
 // Once all of the recipes that were specified above have been fetched, their
 // data will be added to this object below. You may use whatever you like for the
 // keys as long as it's unique, one suggestion might but the URL itself
-const recipeData = {}
+const recipeData = {
+};
 
 window.addEventListener('DOMContentLoaded', init);
 
@@ -44,20 +45,28 @@ async function fetchRecipes() {
 
     // Part 1 Expose - TODO
 
-    for (var i = 0; i < recipes.length; i++) {
+    for (let i = 0; i < recipes.length; i++) {
+              //website url, could be used for key in recipeData 
         fetch(recipes[i])
         //extract the JSON body content
-        .then(response => {
-            if (!response.ok) {
-                Promise.reject(false);
-            }
-            response.json()})
+        .then(response => response.json()
+        )
         .then(data => {
             //store data to this object 
-            recipeData = JSON.parse(data);
-        });
+            recipeData[i] = data;
+
+            if (recipes.length != Object.keys(recipeData).length) {
+                reject(false);
+            }
+            //console.log(data);
+            //console.log(recipes[i]);
+            //console.log(recipeData[i]);
+        })
+        .catch(error => {
+            reject(false);
+        })
     }
-    Promise.resolve(true);
+    resolve(true);
   });
 }
 
@@ -69,6 +78,17 @@ function createRecipeCards() {
   // show any others you've added when the user clicks on the "Show more" button.
 
   // Part 1 Expose - TODO
+  const main = document.querySelector('main');
+  for (let i = 0; i < recipes.length; i++) {
+      console.log('in loop');
+      //create recipe element 
+      const recipeCard = document.createElement('recipe-card');
+      //populate with data 
+      recipeCard.data = recipeData[i];
+      //insert into main 
+      main.appendChild(recipeCard);
+  }
+  
 }
 
 function bindShowMore() {
